@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "608156307629",
+    "firebase_url": "https://likeeatapplication.firebaseio.com",
+    "project_id": "likeeatapplication",
+    "storage_bucket": "likeeatapplication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608156307629:android:6bc0270dfbb38a23",
+        "android_client_info": {
+          "package_name": "com.example.android.likeeatapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608156307629-et016c9uga5ajdpa7figv6acm7ipkv2p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.likeeatapplication",
+            "certificate_hash": "cd6257e471bafebfb6aeb3a17602e7cfe80ddce0"
+          }
+        },
+        {
+          "client_id": "608156307629-hbbgl1566prksjp87i1e7ig3b0pjaq71.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn8xiU0Yno91-EquQzaeIP4H2aHnR7bWE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608156307629-hbbgl1566prksjp87i1e7ig3b0pjaq71.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

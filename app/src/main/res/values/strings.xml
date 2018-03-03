@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">LikeEat</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="logo_txt">logo</string>
+    <string name="masuk">Masuk</string>
+    <string name="daftar">Daftar</string>
+</resources>
