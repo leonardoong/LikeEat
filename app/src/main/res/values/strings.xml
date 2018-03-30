@@ -5,4 +5,24 @@
     <string name="logo_txt">logo</string>
     <string name="masuk">Masuk</string>
     <string name="daftar">Daftar</string>
+    <string name="lupa_pass">Lupa password? Klik disini</string>
+    <string name="reset">Reset Password</string>
+    <string name="old_pass">Password Lama</string>
+    <string name="new_pass">Password Baru</string>
+    <string name="notify_user_pass">Masukkan username dan password terlebih dahulu</string>
+    <string name="password_baru_sent">Password baru sudah dikirim ke email anda</string>
+    <string name="gagal_reset">Reset password gagal</string>
+    <string name="masukkan_email">Masukkan email</string>
+    <string name="facebook_app_id">432869260475345</string>
+    <string name="fb_login_protocol_scheme">fb432869260475345</string>
+    <string name="berhasil_login">Selamat anda sudah berhasil login</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="post_button">Add New</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 </resources>
