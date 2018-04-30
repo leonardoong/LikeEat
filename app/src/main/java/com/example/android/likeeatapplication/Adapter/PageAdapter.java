@@ -1,7 +1,10 @@
-package com.example.android.likeeatapplication;
+package com.example.android.likeeatapplication.Adapter;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.example.android.likeeatapplication.TabFragment1;
+import com.example.android.likeeatapplication.TabFragment2;
 
 /**
  * Created by Leonardo on 3/30/2018.
