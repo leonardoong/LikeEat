@@ -1,6 +1,8 @@
 package com.example.android.likeeatapplication;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.likeeatapplication.Config.Constant;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -28,6 +31,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLogin, mDaftar, mLoginFb;
     private ProgressBar loginProgress;
     private TextView mLupaPass;
+    private ProgressDialog pbDialog;
 
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
@@ -52,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         loginProgress = (ProgressBar) findViewById(R.id.login_progress);
         mLupaPass = (TextView)findViewById(R.id.lupaPassword);
         mLoginFb = (Button)findViewById(R.id.login_fb);
+        pbDialog = new ProgressDialog(this);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -67,21 +75,58 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String email = mEmail.getText().toString();
-                String pass = mPassword.getText().toString();
+                final String str_email = mEmail.getText().toString();
+                final String pass = mPassword.getText().toString();
 
-                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
+                if (!TextUtils.isEmpty(str_email) && !TextUtils.isEmpty(pass)) {
                     loginProgress.setVisibility(View.VISIBLE);
-
-                    mAuth.signInWithEmailAndPassword(email, pass)
+                    pbDialog.setIndeterminate(true);
+                    pbDialog.show();
+                    pbDialog.setMessage("Harap tunggu");
+                    mAuth.signInWithEmailAndPassword(str_email, pass)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        sendToMain();
+                                        Constant.refUser.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                for (final DataSnapshot ds : dataSnapshot.getChildren()) {
+                                                    String email = (String) ds.child("email").getValue();
+                                                    String nama = (String) ds.child("name").getValue();
+                                                    String profile_pic = (String) ds.child("profile_pic").getValue();
+                                                    String ttl = (String) ds.child("ttl").getValue();
+                                                    String phone = (String) ds.child("phone").getValue();
+                                                    if (email.equals(str_email)) {
+                                                        SharedPreferences.Editor editor = getSharedPreferences("userSession", MODE_PRIVATE).edit();
+                                                        editor.putString("email", email);
+                                                        editor.putString("nama", nama);
+                                                        editor.putString("profile_pic", profile_pic);
+                                                        editor.putString("ttl", ttl);
+                                                        editor.putString("phone", phone);
+                                                        editor.apply();
+
+                                                        pbDialog.dismiss();
+                                                        Log.d("", "signInWithEmail:success");
+                                                        FirebaseUser curUser = Constant.mAuth.getCurrentUser();
+                                                        Constant.currentUser = curUser;
+                                                        sendToMain();
+                                                        finish();
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+                                                Log.w("", "Failed to read value.", databaseError.toException());
+                                                pbDialog.dismiss();
+                                            }
+                                        });
                                     } else {
                                         String error = task.getException().getMessage();
+                                        Log.w("", "signInWithEmail:failure", task.getException());
                                         Toast.makeText(LoginActivity.this, "Error : " + error, Toast.LENGTH_SHORT).show();
+                                        pbDialog.dismiss();
                                     }
 
                                     loginProgress.setVisibility(View.INVISIBLE);
@@ -198,7 +243,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void sendToMain() {
-        Toast.makeText(LoginActivity.this, getString(R.string.berhasil_login),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(LoginActivity.this, getString(R.string.berhasil_login),Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
         finish();

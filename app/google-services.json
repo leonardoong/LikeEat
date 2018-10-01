@@ -49,6 +49,50 @@
           "status": 2
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608156307629:android:148ee9697d761677",
+        "android_client_info": {
+          "package_name": "com.example.ubay.likeeat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608156307629-0vbhp9n4mm62jvl8ms9ik7ft5bk5hmjd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ubay.likeeat",
+            "certificate_hash": "daf1262783612ca2429f43f5ee4041434fdd84f1"
+          }
+        },
+        {
+          "client_id": "608156307629-hbbgl1566prksjp87i1e7ig3b0pjaq71.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn8xiU0Yno91-EquQzaeIP4H2aHnR7bWE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608156307629-hbbgl1566prksjp87i1e7ig3b0pjaq71.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
     }
   ],
   "configuration_version": "1"

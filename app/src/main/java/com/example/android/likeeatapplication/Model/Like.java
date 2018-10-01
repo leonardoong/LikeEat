@@ -4,21 +4,19 @@ package com.example.android.likeeatapplication.Model;
  * Created by Leonardo on 4/21/2018.
  */
 
-public class Rating {
+public class Like {
     //model untuk class comment
     //attribut2 apa aja yang ada di class comment
     String id;
     String username;
-    Float rating;
 
     //construcor kosong
-    public Rating() {
+    public Like() {
     }
 
-    public Rating(String id, String username, Float rating) {
+    public Like(String id, String username) {
         this.id = id;
         this.username = username;
-        this.rating = rating;
     }
 
     public String getId() {
@@ -35,13 +33,5 @@ public class Rating {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public Float getRating() {
-        return rating;
-    }
-
-    public void setRating(Float rating) {
-        this.rating = rating;
     }
 }
