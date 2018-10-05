@@ -169,6 +169,9 @@ public class MainActivity extends AppCompatActivity
         }else if(id == R.id.nav_recommend) {
             Intent recommend = new Intent(MainActivity.this, RecommendActivity.class);
             startActivity(recommend);
+        }else if(id == R.id.nav_news) {
+            Intent recommend = new Intent(MainActivity.this, activity_news.class);
+            startActivity(recommend);
         }else if (id == R.id.nav_login) {
             Intent login = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(login);

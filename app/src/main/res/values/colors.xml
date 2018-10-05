@@ -6,4 +6,6 @@
     <color name="snow">#FFFAFA</color>
     <color name="white">#FFFFFF</color>
     <color name="Gold">#FFD700</color>
+    <color name="colorTextSubtitle">#4e4e4e</color>
+    <color name="colorTextTitle">#262626</color>
 </resources>

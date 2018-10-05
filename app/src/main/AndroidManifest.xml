@@ -31,6 +31,9 @@
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
+            android:name=".activity_news"
+            ></activity>
+        <activity
             android:name=".LoginActivity"
             android:theme="@style/NoToolbar" />
         <activity
