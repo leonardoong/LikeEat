@@ -1,20 +1,16 @@
 package com.example.android.likeeatapplication;
 
-import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.net.Uri;
-import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,6 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.likeeatapplication.Adapter.PageAdapter;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity
 
     private TextView user_name, user_email;
     private ImageView user_pic;
+    private GoogleSignInClient mGoogleSignInClient;
 
     private FloatingActionButton floatingActionButton;
 
@@ -78,6 +81,13 @@ public class MainActivity extends AppCompatActivity
         user_pic = (ImageView) header.findViewById(R.id.imageView);
         navigationView.addHeaderView(header);
         navigationView.setNavigationItemSelectedListener(MainActivity.this);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
         tabLayout.addTab(tabLayout.newTab().setText("Post Terbaru"));
@@ -166,15 +176,25 @@ public class MainActivity extends AppCompatActivity
         }else if(id == R.id.nav_profile){
             Intent profile = new Intent(MainActivity.this,ProfileActivity.class);
             startActivity(profile);
-        }else if(id == R.id.nav_recommend) {
-            Intent recommend = new Intent(MainActivity.this, RecommendActivity.class);
+        }else if(id == R.id.nav_weather) {
+            Intent recommend = new Intent(MainActivity.this, WeatherActivity.class);
             startActivity(recommend);
         }else if (id == R.id.nav_login) {
             Intent login = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(login);
         } else if (id == R.id.nav_logout){
-            mAuth.signOut();
+            FirebaseUser user = mAuth.getCurrentUser();
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (user != null){
+                mAuth.signOut();
+            }else if(acct != null){
+                mGoogleSignInClient.signOut();
+            }
+            Toast.makeText(MainActivity.this, "Logout Berhasil", Toast.LENGTH_SHORT).show();
             Intent toLogin = new Intent(MainActivity.this, MainActivity.class);
+            SharedPreferences.Editor prefs = getSharedPreferences("userSession", MODE_PRIVATE).edit();
+            prefs.clear();
+            prefs.commit();
             startActivity(toLogin);
             finish();
         }
@@ -190,6 +210,7 @@ public class MainActivity extends AppCompatActivity
         FirebaseUser user = mAuth.getCurrentUser();
         SharedPreferences prefs = getSharedPreferences("userSession", MODE_PRIVATE);
         String email = prefs.getString("email", "");
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if(user != null){
             floatingActionButton.setVisibility(View.VISIBLE);
             /*for(int menuItemIndex = 0; menuItemIndex < menu.size(); menuItemIndex++){
@@ -205,7 +226,7 @@ public class MainActivity extends AppCompatActivity
             nav_Menu.findItem(R.id.nav_login).setVisible(false);
             nav_Menu.findItem(R.id.nav_logout).setVisible(true);
             loadProfile();
-        }else if(user == null){
+        }else if(user == null && acct == null){
             floatingActionButton.setVisibility(View.INVISIBLE);
             /*for(int menuItemIndex = 0; menuItemIndex < menu.size(); menuItemIndex++){
                 MenuItem menuItem= menu.getItem(menuItemIndex);
@@ -222,6 +243,13 @@ public class MainActivity extends AppCompatActivity
             nav_Menu.findItem(R.id.nav_logout).setVisible(false);
         }else if(user != null && email.equals("admin@admin.com")){
             Toast.makeText(MainActivity.this,"YEAHH", Toast.LENGTH_SHORT).show();
+        }else if(acct != null){
+            floatingActionButton.setVisibility(View.VISIBLE);
+            Menu nav_Menu = navigationView.getMenu();
+            nav_Menu.findItem(R.id.nav_profile).setVisible(true);
+            nav_Menu.findItem(R.id.nav_login).setVisible(false);
+            nav_Menu.findItem(R.id.nav_logout).setVisible(true);
+            loadProfile();
         }
     }
 

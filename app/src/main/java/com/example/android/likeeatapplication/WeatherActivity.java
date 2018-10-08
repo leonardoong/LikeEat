@@ -3,8 +3,6 @@ package com.example.android.likeeatapplication;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.media.Image;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -26,9 +24,7 @@ import com.example.android.likeeatapplication.Retrofit.RetrofitClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.karumi.dexter.Dexter;
@@ -42,21 +38,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.internal.http.RetryAndFollowUpInterceptor;
 import retrofit2.Retrofit;
 
-public class RecommendActivity extends AppCompatActivity {
+public class WeatherActivity extends AppCompatActivity {
 
     private RelativeLayout relativeLayout;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
     private LocationRequest locationRequest;
-    private static final String TAG = "RecommendActivity";
+    private static final String TAG = "WeatherActivity";
     private boolean mLocationPermissionsGranted = true;
 
     ImageView img_cuaca;
@@ -99,10 +93,10 @@ public class RecommendActivity extends AppCompatActivity {
                             mLocationPermissionsGranted = true;
                             buildLocationRequest();
                             //buildLocationCallBack();
-                            if (ActivityCompat.checkSelfPermission(RecommendActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(RecommendActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            if (ActivityCompat.checkSelfPermission(WeatherActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(WeatherActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                 return;
                             }
-                            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(RecommendActivity.this);
+                            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(WeatherActivity.this);
                             //fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
                             try {
                                 if (mLocationPermissionsGranted) {
@@ -117,7 +111,7 @@ public class RecommendActivity extends AppCompatActivity {
                                                 getWeatherInformation();
                                             } else {
                                                 Log.d(TAG, "onComplete: current location is null");
-                                                Toast.makeText(RecommendActivity.this, "Unable to get current location", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(WeatherActivity.this, "Unable to get current location", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
@@ -162,7 +156,7 @@ public class RecommendActivity extends AppCompatActivity {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Toast.makeText(RecommendActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WeatherActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }));
     }

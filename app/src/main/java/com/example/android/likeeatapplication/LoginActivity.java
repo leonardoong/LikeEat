@@ -23,6 +23,11 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -46,6 +51,8 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
     private static final String TAG = "FACELOG";
+    private GoogleSignInClient mGoogleSignInClient;
+    private int RC_SIGN_IN = 001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,13 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(regis);
             }
         });
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +125,6 @@ public class LoginActivity extends AppCompatActivity {
                                                         FirebaseUser curUser = Constant.mAuth.getCurrentUser();
                                                         Constant.currentUser = curUser;
                                                         sendToMain();
-                                                        finish();
                                                     }
                                                 }
                                             }
@@ -183,6 +196,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
+
             }
 
             @Override
@@ -197,6 +211,18 @@ public class LoginActivity extends AppCompatActivity {
                 // ...
             }
         });
+
+        findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
+    }
+
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -205,7 +231,44 @@ public class LoginActivity extends AppCompatActivity {
 
         // Pass the activity result back to the Facebook SDK
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
     }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if(acct != null){
+                FirebaseUser user = mAuth.getCurrentUser();
+                Constant.currentUser = user;
+                SharedPreferences.Editor editor = getSharedPreferences("userSession", MODE_PRIVATE).edit();
+                editor.putString("email", acct.getEmail());
+                editor.putString("nama", acct.getDisplayName());
+                editor.putString("profile_pic", acct.getPhotoUrl().toString());
+                editor.putString("ttl", "Ubah tanggal lahir");
+                editor.putString("phone", "Ubah no Telpon");
+                editor.apply();
+            }
+            updateUI(account);
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            updateUI(null);
+        }
+    }
+
+    private void updateUI(Object o) {
+        sendToMain();
+    }
+
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
@@ -217,8 +280,19 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+                            Log.d(TAG, "signInWithFacebook:success");
+
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Constant.currentUser = user;
+                            SharedPreferences.Editor editor = getSharedPreferences("userSession", MODE_PRIVATE).edit();
+                            editor.putString("email", user.getEmail());
+                            editor.putString("nama", user.getDisplayName());
+                            editor.putString("profile_pic", user.getPhotoUrl().toString());
+                            editor.putString("ttl", "Ubah Tanggal Lahir");
+                            editor.putString("phone", "Ubah no Telpon");
+                            editor.apply();
+                            sendToMain();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -236,11 +310,20 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         //ngecek user sudah login atau belum
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (currentUser != null) {
+            sendToMain();
+        }else if(acct != null){
+            SharedPreferences.Editor editor = getSharedPreferences("userSession", MODE_PRIVATE).edit();
+            editor.putString("email", acct.getEmail());
+            editor.putString("nama", acct.getDisplayName());
+            editor.putString("profile_pic", acct.getPhotoUrl().toString());
+            editor.putString("ttl", "Ubah tanggal lahir");
+            editor.putString("phone", "Ubah no Telpon");
+            editor.apply();
             sendToMain();
         }
     }
-
 
     private void sendToMain() {
         //Toast.makeText(LoginActivity.this, getString(R.string.berhasil_login),Toast.LENGTH_SHORT).show();

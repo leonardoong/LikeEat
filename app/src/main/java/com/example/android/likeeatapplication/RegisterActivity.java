@@ -27,6 +27,7 @@ import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.features.ReturnMode;
 import com.example.android.likeeatapplication.Config.Constant;
 import com.example.android.likeeatapplication.Model.User;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -54,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private ProgressDialog pbDialog;
     private StorageReference refPhotoProfile;
     Uri photoUrl;
+    String photoStringLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,19 +104,52 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             byte[] data = baos.toByteArray();
 
             UploadTask uploadTask = refPhotoProfile.putBytes(data);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
+
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    // Continue with the task to get the download URL
+                    return refPhotoProfile.getDownloadUrl();
                 }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Task<Uri> photoUrl = taskSnapshot.getStorage().getDownloadUrl();
-                    createUser();
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        System.out.println("Upload " + downloadUri);
+                        Toast.makeText(RegisterActivity.this, "Successfully uploaded", Toast.LENGTH_SHORT).show();
+                        if (downloadUri != null) {
+
+                            photoStringLink = downloadUri.toString(); //YOU WILL GET THE DOWNLOAD URL HERE !!!!
+                            System.out.println("Upload " + photoStringLink);
+                            createUser();
+
+                        }
+
+                    } else {
+                        // Handle failures
+                        // ...
+                    }
                 }
             });
+
+//            uploadTask.addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception exception) {
+//                    // Handle unsuccessful uploads
+//                }
+//            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+//                    Task<Uri> photoUrl = taskSnapshot.getStorage().getDownloadUrl();
+//                    createUser();
+//                }
+//            });
         }
     }
 
@@ -132,11 +167,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Constant.refUser.child(Constant.mAuth.getUid()).setValue(new User(
-                                    Constant.mAuth.getUid(), nama, email, phone, photoUrl.toString(), ttl));
+                                    Constant.mAuth.getUid(), nama, email, phone, photoStringLink, ttl));
                             // Sign in success, update UI with the signed-in user's information
                             pbDialog.dismiss();
                             Log.d("", "createUserWithEmail:success");
-                            Constant.currentUser = Constant.mAuth.getCurrentUser();
+                            //Constant.currentUser = Constant.mAuth.getCurrentUser();
                             Toast.makeText(RegisterActivity.this, "Berhasil mendaftar, Silahkan login!", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                             finish();

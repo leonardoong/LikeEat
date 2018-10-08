@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/root_view"
     android:padding="10dp"
-    tools:context="com.example.android.likeeatapplication.RecommendActivity">
+    tools:context="com.example.android.likeeatapplication.WeatherActivity">
 
     <LinearLayout
         android:id="@+id/weather_panel"
