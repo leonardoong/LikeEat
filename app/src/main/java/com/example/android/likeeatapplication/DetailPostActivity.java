@@ -29,6 +29,8 @@ import com.example.android.likeeatapplication.Model.Like;
 import com.example.android.likeeatapplication.Model.Post;
 import com.example.android.likeeatapplication.Model.Rating;
 import com.example.android.likeeatapplication.Model.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -358,7 +360,8 @@ public class DetailPostActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser user = Constant.mAuth.getCurrentUser();
-        if (user == null) {
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        if (user == null && acct == null) {
             mComment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -377,6 +380,27 @@ public class DetailPostActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(DetailPostActivity.this, "Login terlebih dahulu untuk like", Toast.LENGTH_SHORT).show();;
+                }
+            });
+        }else if (acct != null){
+            mComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(DetailPostActivity.this, "Tidak dapat comment menggunakan akun google", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            mRating.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(DetailPostActivity.this, "Tidak dapat rating menggunakan akun google", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            mLikeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(DetailPostActivity.this, "Tidak dapat like menggunakan akun google", Toast.LENGTH_SHORT).show();;
                 }
             });
         }
