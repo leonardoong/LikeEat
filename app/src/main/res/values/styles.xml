@@ -21,6 +21,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+<style name="MyAppBarLayoutTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    <item name="colorControlHighlight">@color/colorAccent</item>
+</style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
