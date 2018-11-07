@@ -17,10 +17,13 @@
                 android:icon="@drawable/ic_thumb_up"/>
             <item android:title="News"
                 android:id="@+id/nav_news"
-                android:icon="@drawable/ic_thumb_up"/>
+                android:icon="@drawable/ic_news"/>
             <item android:title="Info Cuaca"
                 android:id="@+id/nav_weather"
                 android:icon="@drawable/ic_weather"/>
+            <item android:title="Near Me"
+                android:id="@+id/nav_near"
+                android:icon="@drawable/ic_near"/>
 
         </menu>
     </item>

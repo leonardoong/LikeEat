@@ -185,7 +185,10 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.nav_login) {
             Intent login = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(login);
-        } else if (id == R.id.nav_logout){
+        }else if (id == R.id.nav_near){
+            Intent near = new Intent (MainActivity.this, NearActivity.class);
+            startActivity(near);
+        }else if (id == R.id.nav_logout){
             FirebaseUser user = mAuth.getCurrentUser();
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
             if (user != null){

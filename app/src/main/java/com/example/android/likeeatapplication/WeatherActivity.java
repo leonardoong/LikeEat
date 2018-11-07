@@ -3,6 +3,7 @@ package com.example.android.likeeatapplication;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -54,7 +55,7 @@ public class WeatherActivity extends AppCompatActivity {
     private boolean mLocationPermissionsGranted = true;
 
     ImageView img_cuaca;
-    TextView txt_kota, txt_suhu, txt_desc, txt_date_time;
+    TextView txt_kota, txt_suhu, txt_desc, txt_date_time, txt_sunrise, txt_sunset, txt_pressure, txt_humidity, txt_coords, txt_wind;
     LinearLayout weather_panel;
     ProgressBar loading;
     Location currentLocation;
@@ -78,6 +79,12 @@ public class WeatherActivity extends AppCompatActivity {
         txt_suhu = (TextView)findViewById(R.id.txt_suhu);
         txt_desc = (TextView)findViewById(R.id.txt_desc);
         txt_date_time = (TextView)findViewById(R.id.txt_date_time);
+        txt_coords = (TextView)findViewById(R.id.txt_coords);
+        txt_sunrise = (TextView)findViewById(R.id.txt_sunrise);
+        txt_sunset = (TextView)findViewById(R.id.txt_sunset);
+        txt_pressure = (TextView)findViewById(R.id.txt_pressure);
+        txt_humidity = (TextView)findViewById(R.id.txt_humidity);
+        txt_wind = (TextView)findViewById(R.id.txt_wind);
 
         weather_panel = (LinearLayout)findViewById(R.id.weather_panel);
         loading = (ProgressBar)findViewById(R.id.loading);
@@ -149,6 +156,13 @@ public class WeatherActivity extends AppCompatActivity {
                         txt_desc.setText(new StringBuilder("Weather in ").append(weatherResult.getName()).toString());
                         txt_suhu.setText(new StringBuilder((String.valueOf(weatherResult.getMain().getTemp()))).append("°C").toString());
                         txt_date_time.setText(convertUnixToDate(weatherResult.getDt()));
+                        txt_pressure.setText(new StringBuilder(String.valueOf(weatherResult.getMain().getPressure())).append(" hpa").toString());
+                        txt_humidity.setText(new StringBuilder(String.valueOf(weatherResult.getMain().getHumidity())).append(" %").toString());
+                        txt_sunrise.setText(convertUnixToHour(weatherResult.getSys().getSunrise()));
+                        txt_sunset.setText(convertUnixToHour(weatherResult.getSys().getSunset()));
+                        txt_coords.setText(weatherResult.getCoord().toString());
+                        txt_wind.setText(new StringBuilder("Speed : ").append(weatherResult.getWind().getSpeed()).append( "Deg : ")
+                        .append(weatherResult.getWind().getDeg()));
 
                         weather_panel.setVisibility(View.VISIBLE);
                         loading.setVisibility(View.GONE) ;
@@ -164,6 +178,13 @@ public class WeatherActivity extends AppCompatActivity {
     private String convertUnixToDate(long dt) {
         Date date = new Date(dt*1000L);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm EEE MM yyyy");
+        String formatted = sdf.format(date);
+        return formatted;
+    }
+
+    private String convertUnixToHour(long dt) {
+        Date date = new Date(dt*1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String formatted = sdf.format(date);
         return formatted;
     }
