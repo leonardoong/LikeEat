@@ -88,8 +88,13 @@
         </activity>
         <activity android:name=".WeatherActivity"
             android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".NewsDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            ></activity>
         <activity android:name=".NearActivity"
             android:parentActivityName=".MainActivity"></activity>
+
     </application>
 
 </manifest>
